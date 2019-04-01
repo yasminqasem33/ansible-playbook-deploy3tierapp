@@ -1,0 +1,28 @@
+- name: install nodejs, npm and git
+  yum: 
+    name: "{{ item }}"
+    state: installed
+ 
+  with_items:
+    - nodejs
+    - npm
+    - git
+- name: install forever package
+  npm: name=forever state=present global=yes
+
+- name: coling app from git 
+  git:
+    dest: node-app
+    repo: https://github.com/yasminqasem33/goodreads-ansible
+- name: install packages based on packages.json
+  npm: 
+    path: node-app
+    
+- name: check running nodejs application
+  command: forever list
+  register: forever_list
+  changed_when: false
+
+- name: start nodejs app
+  command: forever start node-app/server.js
+  when: " forever_list.stdout.find('node-app/server.js') == -1"
