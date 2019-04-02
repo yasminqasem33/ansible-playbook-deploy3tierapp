@@ -1,0 +1,20 @@
+- name: install apchae
+  yum:
+    name: httpd
+    state: present
+- name: start apache
+  service:
+    name: httpd
+    state: started
+- name: configure apache as reverse proxy
+  copy: 
+    src: proxy.conf
+    dest: /etc/httpd/conf.d/proxy.conf
+  notify: restart apache 
+- name: disable selinux
+  copy: 
+    src: config
+    dest: /etc/selinux/config
+  notify: restart apache
+  
+
