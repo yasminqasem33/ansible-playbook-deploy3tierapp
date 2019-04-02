@@ -10,19 +10,23 @@
 - name: install forever package
   npm: name=forever state=present global=yes
 
-- name: coling app from git 
+- name: cloing app from git 
   git:
+    force: yes
     dest: node-app
     repo: https://github.com/yasminqasem33/goodreads-ansible
 - name: install packages based on packages.json
-  npm: 
-    path: node-app
-    
-- name: check running nodejs application
-  command: forever list
-  register: forever_list
-  changed_when: false
+  npm:
+    path: node-app 
+- name: Get app process id
+  shell: "ps aux | grep app.js | grep -v grep | awk '{print $2}'"
+  register: process_id
 
-- name: start nodejs app
+- name: Stop app process
+  shell: kill -9 {{ item }}
+  with_items: process_id.stdout_lines
+  ignore_errors: True  # Ignore error when no process running
+
+- name: Start application
   command: forever start node-app/server.js
-  when: " forever_list.stdout.find('node-app/server.js') == -1"
+    

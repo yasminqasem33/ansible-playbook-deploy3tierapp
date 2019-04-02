@@ -1,20 +1,20 @@
-- name: install apchae
+- name: install nginx
   yum:
-    name: httpd
+    name: nginx
     state: present
-- name: start apache
-  service:
-    name: httpd
+- name: start nginx
+  service: 
+    name: nginx
     state: started
-- name: configure apache as reverse proxy
+- name: configure nginx as reverse proxy
   copy: 
-    src: proxy.conf
-    dest: /etc/httpd/conf.d/proxy.conf
-  notify: restart apache 
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx 
 - name: disable selinux
   copy: 
     src: config
     dest: /etc/selinux/config
-  notify: restart apache
+  notify: restart nginx
   
 
